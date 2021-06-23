@@ -128,7 +128,7 @@ public struct BuildSettings {
 			.map { $1.intersection($0.buildSDKRawNames
 															.filter {
 																if ($0.lowercased().hasSuffix("simulator") && skipSimulators) {
-																	Carthage.println("~~~ Skip simulator [\($0)]")
+																	print("~~~ Skip simulator [\($0)]")
 																	return false
 																}
 																return true

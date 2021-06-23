@@ -686,7 +686,7 @@ public func buildScheme( // swiftlint:disable:this function_body_length cyclomat
 	)
 	let buildURL = rootDirectoryURL.appendingPathComponent(Constants.binariesFolderPath)
 
-	return BuildSettings.SDKsForScheme(scheme, inProject: project)
+	return BuildSettings.SDKsForScheme(scheme, inProject: project, skipSimulators: options.skipSimulators)
 		.flatMap(.concat) { sdk -> SignalProducer<SDK, CarthageError> in
 			var argsForLoading = buildArgs
 			argsForLoading.sdk = sdk

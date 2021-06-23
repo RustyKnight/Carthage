@@ -121,12 +121,19 @@ public struct BuildSettings {
 	///
 	/// If an SDK is unrecognized or could not be determined, an error will be
 	/// sent on the returned signal.
-	public static func SDKsForScheme(_ scheme: Scheme, inProject project: ProjectLocator) -> SignalProducer<SDK, CarthageError> {
+	public static func SDKsForScheme(_ scheme: Scheme, inProject project: ProjectLocator, skipSimulators: Bool) -> SignalProducer<SDK, CarthageError> {
 		return load(with: BuildArguments(project: project, scheme: scheme))
 			.zip(with: SDK.setsFromJSONShowSDKsWithFallbacks.promoteError(CarthageError.self))
 			.take(first: 1)
-			.map { $1.intersection($0.buildSDKRawNames.map { sdk in SDK(name: sdk, simulatorHeuristic: "") }) }
-			.flatten()
+			.map { $1.intersection($0.buildSDKRawNames
+															.filter {
+																if ($0.lowercased().hasSuffix("simulator") && skipSimulators) {
+																	Carthage.println("~~~ Skip simulator [\($0)]")
+																	return false
+																}
+																return true
+															}.map { sdk in SDK(name: sdk, simulatorHeuristic: "") }
+			)}.flatten()
 	}
 
 	/// Returns the value for the given build setting, or an error if it could
@@ -145,6 +152,7 @@ public struct BuildSettings {
 
 		if let supportedPlatforms = supportedPlatforms.value {
 			return Set(
+				// Should consider filtering out sdks which end in simulator
 				supportedPlatforms.split(separator: " ").map(String.init)
 			)
 		} else if let platformName = self["PLATFORM_NAME"].value {

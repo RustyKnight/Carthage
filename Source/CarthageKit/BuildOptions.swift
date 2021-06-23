@@ -18,6 +18,8 @@ public struct BuildOptions {
 	public var useBinaries: Bool
 	/// Whether to create an XCFramework instead of lipoing built products.
 	public var useXCFrameworks: Bool
+	
+	public var skipSimulators: Bool
 
 	public init(
 		configuration: String,
@@ -26,7 +28,8 @@ public struct BuildOptions {
 		derivedDataPath: String? = nil,
 		cacheBuilds: Bool = true,
 		useBinaries: Bool = true,
-		useXCFrameworks: Bool = false
+		useXCFrameworks: Bool = false,
+		skipSimulators: Bool = false
 	) {
 		self.configuration = configuration
 		self.platforms = platforms
@@ -35,5 +38,6 @@ public struct BuildOptions {
 		self.cacheBuilds = cacheBuilds
 		self.useBinaries = useBinaries
 		self.useXCFrameworks = useXCFrameworks
+		self.skipSimulators = skipSimulators
 	}
 }
